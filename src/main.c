@@ -6,31 +6,62 @@ void printInt(void *ptr){
     printf("%d", *ptrInt);
 }
 int main(){
-
-    // node_t *l = list_create();
-    // int a = 0,  b = 1, c = 2 ,d =3 ;
-    // l= list_insert(l,&a);
-    // l=list_insert(l, &b);
-    // l=list_insert(l, &c);
-    // l=list_insert(l, &d);
-    // list_print(l,&printInt);
-    // list_remove(l, &b);
-    //  list_print(l,&printInt);
-
-//      node_t *l = NULL;
-//      int x = 42;  
-// l = list_remove(l, &x);  // doit juste retourner NULL sans crash
-// list_print(l,&printInt);
-
+ // Créer une liste vide
     node_t *l = list_create();
-    int a = 1, b = 0;
-    l= list_insert(l,&a);
-    l=list_insert(l, &b);
-    list_print(l,&printInt);
+
+    // Ajouter des éléments en tête
+    int a = 1, b = 2, c = 3, d = 4;
+    l = list_insert(l, &a);
+    l = list_insert(l, &b);
+    l = list_insert(l, &c);  // liste: 3 -> 2 -> 1
+    printf("Liste après insert en tête: ");
+    list_print(l, printInt);
     printf("\n");
 
-    l=list_headRemove(l);
-    list_print(l,&printInt);
+    //  Ajouter un élément en queue
+    l = list_append(l, &d); // liste: 3 -> 2 -> 1 -> 4
+    printf("Liste après append en queue: ");
+    list_print(l, printInt);
+    printf("\n");
+
+    // Tester list_remove (supprimer le milieu)
+    l = list_remove(l, &b); // supprime 2, liste: 3 -> 1 -> 4
+    printf("Liste après remove b: ");
+    list_print(l, printInt);
+    printf("\n");
+
+    // Supprimer la tête
+    l = list_headRemove(l); // supprime 3, liste: 1 -> 4
+    printf("Liste après headRemove: ");
+    list_print(l, printInt);
+    printf("\n");
+
+    //  Tester list_getData et list_setData
+    printf("Valeur du premier noeud: ");
+    list_get_data(l); // affiche 1 (tu peux adapter list_getData pour printf)
+    printf("\n");
+
+    int newVal = 99;
+    list_set_data(l, &newVal); // change 1 en 99
+    printf("Liste après setData: ");
+    list_print(l, printInt);
+    printf("\n");
+
+    //  Parcourir avec list_next
+    printf("Parcours avec list_next: ");
+    node_t *tmp = l;
+    while(tmp != NULL) {
+        printInt(tmp->data);
+        tmp = list_next(tmp);
+    }
+    printf("\n");
+
+    //  Supprimer tous les noeuds
+    while(l != NULL) {
+        l = list_headRemove(l);
+    }
+    printf("Liste après suppression complète: ");
+    list_print(l, printInt);
     printf("\n");
 
 }

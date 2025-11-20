@@ -1,0 +1,10 @@
+# fichiers objets
+*.o
+
+# exécutable
+programme.exe
+programme 
+
+# fichiers temporaires
+*.swp
+*.tmp

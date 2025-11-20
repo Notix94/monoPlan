@@ -13,7 +13,12 @@ void *list_get_data(const node_t * node){
     if(node==NULL) return NULL;
     return node->data;
 }
+void list_set_data(node_t * node, void * data){
 
+ if (node != NULL) {
+        node->data = data;
+    }
+}
 
 void list_print(node_t * head, void (*fct) (void*)){
     printf("\n");
