@@ -90,3 +90,14 @@ node_t * list_headRemove(node_t * head){
     return head;
 
 }
+
+ void list_destroy(node_t * head){
+	if(head==NULL)return;
+ // destruction d’une liste
+	node_t *temp=head;
+	while(temp!=NULL){
+		node_t *next=temp->next;
+		free(temp);
+		temp=next;
+	}
+}

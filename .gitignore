@@ -1,3 +1,4 @@
+
 # fichiers objets
 *.o
 
@@ -6,5 +7,3 @@ programme.exe
 programme 
 
 # fichiers temporaires
-*.swp
-*.tmp
