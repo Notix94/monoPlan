@@ -16,6 +16,7 @@ void *list_get_data(const node_t * node){
 
 
 void list_print(node_t * head, void (*fct) (void*)){
+    printf("\n");
     node_t *ptr = head;
     while(ptr){
         (*fct) (list_get_data(ptr));
@@ -23,7 +24,7 @@ void list_print(node_t * head, void (*fct) (void*)){
     }
 }
 
-
+//cree et insert nouv node en tete
 node_t *list_insert(node_t *head,void *data){
     node_t *n1 = malloc(sizeof(node_t));
     if(!n1) return head; // échec allocation
@@ -32,3 +33,44 @@ node_t *list_insert(node_t *head,void *data){
     head = n1;
     return head;
 };
+
+node_t * list_append(node_t * head, void * data){
+    node_t *n1 = malloc(sizeof(node_t));
+    if(!n1) return head;
+
+    n1->data = data;
+    n1->next = NULL;
+
+    if (head == NULL)//si la liste est empty
+        return n1;
+
+    node_t *tmp = head;
+    while(tmp->next !=NULL){
+        tmp = tmp->next;
+    }
+    tmp->next = n1;
+    return head;
+}
+//sup premiere instance qui a la value data
+//return head
+node_t * list_remove(node_t * head, void *data){
+    node_t *tmp =head;
+    node_t *prev;
+    //si head->data == data
+if(tmp != NULL &&tmp->data == data){
+head = tmp->next;
+free(tmp);
+return head;
+}
+while(tmp!=NULL && tmp->data !=data){
+    prev = tmp;
+    tmp = tmp->next;//tmp == node a supr
+}
+//si tmp arrive a la fin sans trv data
+if(tmp==NULL){
+    return head;
+}
+prev->next = tmp->next;
+free(tmp);
+return head;
+}
