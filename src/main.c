@@ -33,4 +33,7 @@ int main(){
     list_print(l,&printInt);
     printf("\n");
 
+    list_destroy(l);
+    printf("\n");
+
 }

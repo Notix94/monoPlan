@@ -18,4 +18,6 @@ node_t * list_remove(node_t * head, void *data);
 
 node_t * list_headRemove(node_t * head);
 
+void list_destroy(node_t * head);
+
 #endif

@@ -1,0 +1,10 @@
+#fichiers objet
+*.o
+
+#executable
+programme.exe
+programme
+
+#fichier temporaire
+*.swp
+*.tmp
