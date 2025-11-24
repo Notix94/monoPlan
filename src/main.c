@@ -38,7 +38,7 @@ int main(){
 
     //  Tester list_getData et list_setData
     printf("Valeur du premier noeud: ");
-    list_get_data(l); // affiche 1 (tu peux adapter list_getData pour printf)
+    list_get_data(l); // affiche 1 
     printf("\n");
 
     int newVal = 99;
