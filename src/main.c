@@ -4,6 +4,7 @@
 void printInt(void *ptr){
     int * ptrInt=(int*) ptr;
     printf("%d", *ptrInt);
+    printf("\n");
 }
 int main(){
  // Créer une liste vide
@@ -37,9 +38,9 @@ int main(){
     printf("\n");
 
     //  Tester list_getData et list_setData
-    printf("Valeur du premier noeud: ");
-    list_get_data(l); // affiche 1 (tu peux adapter list_getData pour printf)
-    printf("\n");
+    printf("Valeur du premier noeud: %d \n ", *(int*)list_get_data(l)); // affiche 1 );
+    
+ 
 
     int newVal = 99;
     list_set_data(l, &newVal); // change 1 en 99

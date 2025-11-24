@@ -10,7 +10,10 @@ node_t *list_next(node_t *node){
 }
 
 void *list_get_data(const node_t * node){
-    if(node==NULL) return NULL;
+    if(node==NULL) {
+        return NULL;
+   }
+   
     return node->data;
 }
 void list_set_data(node_t * node, void * data){
