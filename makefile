@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -std=c11
 INCLUDE = -Iinclude
 
 # Fichiers sources et objets
-SRC = src/stack.c src/testStack.c src/main.c src/liste.c #var contient all files sources .c du projet.
+SRC = src/stack.c src/testStack.c src/main.c src/liste.c src/formule.c src/feuille.c src/cellule.c src/token.c #var contient all files sources .c du projet.
 OBJ = $(SRC:.c=.o) # $(VAR:pattern=replacement)	var qui contient all files objets .o correspondants.
 # Nom de l'exécutable
 EXEC = programme
