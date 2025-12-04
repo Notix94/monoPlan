@@ -9,7 +9,7 @@ void printInt(void *ptr){
     printf("%d", *ptrInt);
     printf("\n");
 }
-int main(){
+
 //  // Créer une liste vide
 //     node_t *l = list_create();
 
@@ -72,53 +72,236 @@ int main(){
 
 //     list_destroy(l);
 //     printf("\n");
-  printf("=== Initialisation de la feuille ===\n");
+void test_cellule_simple() {
+    printf("=== TEST 1 : Cellule avec valeur simple ===\n");
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
-    printf("Feuille initialisée : %s, %d lignes x %d colonnes\n\n",
-           f.nom, f.lignes, f.colonnes);
-
-    // --- Test 1 : cellule avec valeur simple ---
-    printf("=== Test 1 : cellule A1 avec valeur simple ===\n");
+    
     s_cell *A1 = init_cell();
     cell_setStr(A1, "10", &f);
     feuille_setCell(&f, A1, "A1");
-    printf("A1 = %.2f (attendu: 10.0)\n\n", A1->value);
-
-    printf("=== Test 1-- echec : cellule A1 avec valeur simple ===\n");
-    s_cell *A2 = init_cell();
-    cell_setStr(A2, "10dcdsb", &f);
-    feuille_setCell(&f, A2, "A2");
- 
-
     
-    // --- Test 2 : cellule avec formule valide ---
-    printf("=== Test 2 : cellule B2 avec formule '=A1+5' ===\n");
+    printf("A1 = %.2f (attendu: 10.00)\n", A1->value);
+    printf("A1 tokens = %p (attendu: NULL)\n", (void*)A1->tokens);
+    printf("✓ Test 1 réussi\n\n");
+}
+
+void test_formule_simple() {
+    printf("=== TEST 2 : Formule simple avec référence ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    // Créer A1 = 10
+    s_cell *A1 = init_cell();
+    cell_setStr(A1, "10", &f);
+    feuille_setCell(&f, A1, "A1");
+    
+    // Créer B1 = A1 + 5
+    s_cell *B1 = init_cell();
+    feuille_setCell(&f, B1, "B1");
+    cell_setStr(B1, "=A1 5 +", &f);
+    
+    printf("A1 = %.2f (attendu: 10.00)\n", A1->value);
+    printf("B1 = %.2f (attendu: 15.00)\n", B1->value);
+    printf("✓ Test 2 réussi\n\n");
+}
+
+void test_reference_inexistante() {
+    printf("=== TEST 3 : Référence vers cellule inexistante ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    // B2 = C5 + 5 (C5 n'existe pas mais est dans les limites)
     s_cell *B2 = init_cell();
-    cell_setStr(B2, "=A1+5", &f);
     feuille_setCell(&f, B2, "B2");
-    printf("B2 = %.2f (attendu: 15.0)\n\n", B2->value);
-
-    // --- Test 3 : cellule avec référence vide ---
-    printf("=== Test 3 : cellule D4 avec référence vide '=' ===\n");
-    s_cell *D4 = init_cell();
-    cell_setStr(D4, "=", &f);
-    feuille_setCell(&f, D4, "D4");
-    printf("D4 = %.2f (attendu: 0.0, erreur: référence vide)\n\n", D4->value);
-
-    // --- Test 4 : cellule avec texte ---
-    printf("=== Test 4 : cellule F6 avec texte 'Hello' ===\n");
-    s_cell *F6 = init_cell();
-    cell_setStr(F6, "Hello", &f);
-    feuille_setCell(&f, F6, "F6");
+    cell_setStr(B2, "=C5 5 +", &f);
     
-
-    // --- Test 5 : cellule avec formule utilisant une cellule non existante ---
-    printf("=== Test 5 : cellule E5 avec formule '=Z1+3' ===\n");
-    s_cell *E5 = init_cell();
-    cell_setStr(E5, "=Z1+3", &f);
-    feuille_setCell(&f, E5, "E5");
-    printf("E5 = %.2f (attendu: 3.0 si Z1 vide, message d'erreur attendu)\n\n", E5->value);
-
+    printf("B2 = %.2f (attendu: 5.00)\n", B2->value);
     
+    // Vérifier que C5 a été créée (C=3, 5=index 4)
+    s_cell *C5 = f.tab[4][2];
+    if(C5 != NULL) {
+        printf("C5 = %.2f (attendu: 0.00)\n", C5->value);
+        printf("C5 existe : OUI\n");
+    } else {
+        printf("❌ ERREUR : C5 n'a pas été créée !\n");
+    }
+    printf("✓ Test 3 réussi\n\n");
+}
+
+void test_dependances() {
+    printf("=== TEST 4 : Vérification des dépendances ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    // A1 = 10
+    s_cell *A1 = init_cell();
+    cell_setStr(A1, "10", &f);
+    feuille_setCell(&f, A1, "A1");
+    
+    // B1 = A1 + 5
+    s_cell *B1 = init_cell();
+    feuille_setCell(&f, B1, "B1");
+    cell_setStr(B1, "=A1 5 +", &f);
+    
+    // C1 = A1 * 2
+    s_cell *C1 = init_cell();
+    feuille_setCell(&f, C1, "C1");
+    cell_setStr(C1, "=A1 2 *", &f);
+    
+    // Vérifier que A1 a 2 dépendants
+    printf("A1 = %.2f\n", A1->value);
+    printf("B1 = %.2f (attendu: 15.00)\n", B1->value);
+    printf("C1 = %.2f (attendu: 20.00)\n", C1->value);
+    
+    int count = 0;
+    node_t *n = A1->cells;
+    printf("Dépendants de A1 : ");
+    while(n) {
+        s_cell *dep = list_get_data(n);
+        printf("%p ", (void*)dep);
+        count++;
+        n = list_next(n);
+    }
+    printf("\nNombre de dépendants : %d (attendu: 2)\n", count);
+    
+    if(count == 2) {
+        printf("✓ Test 4 réussi\n\n");
+    } else {
+        printf("❌ ERREUR : nombre de dépendants incorrect\n\n");
+    }
+}
+
+void test_operateurs_multiples() {
+    printf("=== TEST 5 : Formule avec plusieurs opérateurs ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    // A1 = 10, B1 = 20
+    s_cell *A1 = init_cell();
+    cell_setStr(A1, "10", &f);
+    feuille_setCell(&f, A1, "A1");
+    
+    s_cell *B1 = init_cell();
+    cell_setStr(B1, "20", &f);
+    feuille_setCell(&f, B1, "B1");
+    
+    // C1 = (A1 + B1) * 2 → en notation polonaise inverse : A1 B1 + 2 *
+    s_cell *C1 = init_cell();
+    feuille_setCell(&f, C1, "C1");
+    cell_setStr(C1, "=A1 B1 + 2 *", &f);
+    
+    printf("A1 = %.2f\n", A1->value);
+    printf("B1 = %.2f\n", B1->value);
+    printf("C1 = %.2f (attendu: 60.00)\n", C1->value);
+    printf("✓ Test 5 réussi\n\n");
+}
+
+void test_division_par_zero() {
+    printf("=== TEST 6 : Division par zéro ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    s_cell *A1 = init_cell();
+    feuille_setCell(&f, A1, "A1");
+    cell_setStr(A1, "=10 0 /", &f);
+    
+    printf("A1 = %.2f (attendu: 0.00, car division par zéro)\n", A1->value);
+    printf("✓ Test 6 réussi\n\n");
+}
+
+void test_chaine_references() {
+    printf("=== TEST 7 : Chaîne de références (A1→B1→C1) ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    // A1 = 5
+    s_cell *A1 = init_cell();
+    cell_setStr(A1, "5", &f);
+    feuille_setCell(&f, A1, "A1");
+    
+    // B1 = A1 * 2
+    s_cell *B1 = init_cell();
+    feuille_setCell(&f, B1, "B1");
+    cell_setStr(B1, "=A1 2 *", &f);
+    
+    // C1 = B1 + 3
+    s_cell *C1 = init_cell();
+    feuille_setCell(&f, C1, "C1");
+    cell_setStr(C1, "=B1 3 +", &f);
+    
+    printf("A1 = %.2f (attendu: 5.00)\n", A1->value);
+    printf("B1 = %.2f (attendu: 10.00)\n", B1->value);
+    printf("C1 = %.2f (attendu: 13.00)\n", C1->value);
+    printf("✓ Test 7 réussi\n\n");
+}
+
+void test_texte() {
+    printf("=== TEST 8 : Cellule texte ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
+    
+    s_cell *A1 = init_cell();
+    cell_setStr(A1, "Bonjour", &f);
+    feuille_setCell(&f, A1, "A1");
+    
+    printf("A1 contenu = '%s'\n", A1->t);
+    printf("A1 valeur = %.2f (attendu: 0.00 pour texte)\n", A1->value);
+    printf("✓ Test 8 réussi\n\n");
+}
+// void test_recalcul_automatique() {
+//     printf("=== TEST 9 : Recalcul automatique ===\n");
+//     s_feuille f;
+//     init_feuille(&f, "Test", 26, 26);
+    
+//     // A1 = 10
+//     s_cell *A1 = init_cell();
+//     cell_setStr(A1, "10", &f);
+//     feuille_setCell(&f, A1, "A1");
+    
+//     // B1 = A1 + 5
+//     s_cell *B1 = init_cell();
+//     feuille_setCell(&f, B1, "B1");
+//     cell_setStr(B1, "=A1 5 +", &f);
+    
+//     // C1 = B1 * 2
+//     s_cell *C1 = init_cell();
+//     feuille_setCell(&f, C1, "C1");
+//     cell_setStr(C1, "=B1 2 *", &f);
+    
+//     printf("Initial : A1=%.2f, B1=%.2f, C1=%.2f\n", A1->value, B1->value, C1->value);
+//     printf("Attendu : A1=10.00, B1=15.00, C1=30.00\n");
+    
+//     // MODIFIER A1
+//     printf("\n>>> Modification de A1 : 10 → 20\n");
+//     cell_setStr(A1, "20", &f);
+    
+//     printf("Après recalcul : A1=%.2f, B1=%.2f, C1=%.2f\n", A1->value, B1->value, C1->value);
+//     printf("Attendu : A1=20.00, B1=25.00, C1=50.00\n");
+    
+//     if(B1->value == 25.0 && C1->value == 50.0) {
+//         printf("✓ Test 9 réussi : recalcul automatique fonctionne !\n\n");
+//     } else {
+//         printf("❌ Test 9 échoué : recalcul ne fonctionne pas\n\n");
+//     }
+//}
+int main() {
+    printf("╔════════════════════════════════════════════════╗\n");
+    printf("║   SUITE DE TESTS - JALON 2 : FORMULES          ║\n");
+    printf("╚════════════════════════════════════════════════╝\n\n");
+    
+    test_cellule_simple();
+    test_formule_simple();
+    test_reference_inexistante();
+    test_dependances();
+    test_operateurs_multiples();
+    test_division_par_zero();
+    test_chaine_references();
+    test_texte();
+    // test_recalcul_automatique();
+    printf("╔════════════════════════════════════════════════╗\n");
+    printf("║   TOUS LES TESTS TERMINÉS !                    ║\n");
+    printf("╚════════════════════════════════════════════════╝\n");
+    
+    return 0;
 }

@@ -1,6 +1,9 @@
 #include "../include/cellule.h"
 #include "../include/formule.h"
 #include "../include/feuille.h"
+
+
+
 s_cell *init_cell(){
 
     s_cell *c = malloc(sizeof(s_cell));
@@ -11,7 +14,7 @@ s_cell *init_cell(){
     c->cells = NULL;
     return c;
 }
-
+// assigner une chaine a la cellule et analyser la formule
 void cell_setStr(s_cell *c, const char *t, s_feuille *f){
     // 1. copier le texte
     strcpy(c->t, t);
