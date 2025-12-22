@@ -17,6 +17,7 @@ void *list_get_data(const node_t * node){
    
     return node->data;
 }
+
 //modif le noeud du params
 void list_set_data(node_t * node, void * data){
 
@@ -109,4 +110,15 @@ node_t * list_headRemove(node_t * head){
 		free(temp);//free la memory pointee
 		temp=next; // pointe proch noeud
 	}
+}
+int list_contains(node_t *head, void *data) {
+    node_t *n = head;
+
+    while(n) {
+        if(list_get_data(n) == data) {
+            return 1; // trouvé
+        }
+        n = list_next(n);
+    }
+    return 0; // pas trouvé
 }

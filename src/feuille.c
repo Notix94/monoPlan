@@ -1,6 +1,5 @@
 #include "../include/feuille.h"
-#include <string.h>
-#include <ctype.h>
+
 void init_feuille(s_feuille *f, char *nom, int lignes, int colonnes){
     strcpy(f->nom, nom);
 
