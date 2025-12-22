@@ -1,10 +1,9 @@
-
 #ifndef _TOKEN_H_
 #define _TOKEN_H_
 
 #include "liste.h"
 #include "cellule.h"
-typedef struct cell s_cell;  
+typedef struct cell s_cell;  //pour compil
 
 typedef struct token{
     enum{VALUE,REF,OPERATOR} type;

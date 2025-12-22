@@ -1,13 +1,15 @@
-
 #ifndef _FEUILLE_H_
 #define _FEUILLE_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "stack.h"
+#include <string.h>
+#include <ctype.h>
 #include "token.h"
 #include "cellule.h"
-#define MAX_FEUILLE_LENGTH 256
+
+#define MAX_FEUILLE_LENGTH 256 //nb case
 #define NBLIG 26
 #define NBCOL 50
 

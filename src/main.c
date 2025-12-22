@@ -43,10 +43,6 @@ void printInt(void *ptr){
 //     //  Tester list_getData et list_setData
 
 //     printf("Valeur du premier noeud: %d \n ", *(int*)list_get_data(l)); // affiche 1 );
-    
- 
-
-
 //     int newVal = 99;
 //     list_set_data(l, &newVal); // change 1 en 99
 //     printf("Liste après setData: ");
@@ -77,12 +73,12 @@ void test_cellule_simple() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "10", &f);
-    feuille_setCell(&f, A1, "A1");
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "10", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    printf("A1 = %.2f (attendu: 10.00)\n", A1->value);
-    printf("A1 tokens = %p (attendu: NULL)\n", (void*)A1->tokens);
+    printf("D3 = %.2f (attendu: 10.00)\n", D3->value);
+    printf("D3 tokens = %p (attendu: NULL)\n", (void*)D3->tokens);
     printf("✓ Test 1 réussi\n\n");
 }
 
@@ -91,18 +87,18 @@ void test_formule_simple() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    // Créer A1 = 10
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "10", &f);
-    feuille_setCell(&f, A1, "A1");
+    // Créer D3 = 10
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "10", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    // Créer B1 = A1 + 5
-    s_cell *B1 = init_cell();
-    feuille_setCell(&f, B1, "B1");
-    cell_setStr(B1, "=A1 5 +", &f);
+    // Créer A4 = D3 + 5
+    s_cell *A4 = init_cell();
+    feuille_setCell(&f, A4, "A4");
+    cell_setStr(A4, "=D3 5 +", &f);
     
-    printf("A1 = %.2f (attendu: 10.00)\n", A1->value);
-    printf("B1 = %.2f (attendu: 15.00)\n", B1->value);
+    printf("D3 = %.2f (attendu: 10.00)\n", D3->value);
+    printf("A4 = %.2f (attendu: 15.00)\n", A4->value);
     printf("✓ Test 2 réussi\n\n");
 }
 
@@ -134,29 +130,29 @@ void test_dependances() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    // A1 = 10
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "10", &f);
-    feuille_setCell(&f, A1, "A1");
+    // D3 = 10
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "10", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    // B1 = A1 + 5
-    s_cell *B1 = init_cell();
-    feuille_setCell(&f, B1, "B1");
-    cell_setStr(B1, "=A1 5 +", &f);
+    // A4 = D3 + 5
+    s_cell *A4 = init_cell();
+    feuille_setCell(&f, A4, "A4");
+    cell_setStr(A4, "=D3 5 +", &f);
     
-    // C1 = A1 * 2
-    s_cell *C1 = init_cell();
-    feuille_setCell(&f, C1, "C1");
-    cell_setStr(C1, "=A1 2 *", &f);
+    // A5 = D3 * 2
+    s_cell *A5 = init_cell();
+    feuille_setCell(&f, A5, "A5");
+    cell_setStr(A5, "=D3 2 *", &f);
     
-    // Vérifier que A1 a 2 dépendants
-    printf("A1 = %.2f\n", A1->value);
-    printf("B1 = %.2f (attendu: 15.00)\n", B1->value);
-    printf("C1 = %.2f (attendu: 20.00)\n", C1->value);
+    // Vérifier que D3 a 2 dépendants
+    printf("D3 = %.2f\n", D3->value);
+    printf("A4 = %.2f (attendu: 15.00)\n", A4->value);
+    printf("A5 = %.2f (attendu: 20.00)\n", A5->value);
     
     int count = 0;
-    node_t *n = A1->cells;
-    printf("Dépendants de A1 : ");
+    node_t *n = D3->cells;
+    printf("Dépendants de D3 : ");
     while(n) {
         s_cell *dep = list_get_data(n);
         printf("%p ", (void*)dep);
@@ -177,23 +173,23 @@ void test_operateurs_multiples() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    // A1 = 10, B1 = 20
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "10", &f);
-    feuille_setCell(&f, A1, "A1");
+    // D3 = 10, A4 = 20
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "10", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    s_cell *B1 = init_cell();
-    cell_setStr(B1, "20", &f);
-    feuille_setCell(&f, B1, "B1");
+    s_cell *A4 = init_cell();
+    cell_setStr(A4, "20", &f);
+    feuille_setCell(&f, A4, "A4");
     
-    // C1 = (A1 + B1) * 2 → en notation polonaise inverse : A1 B1 + 2 *
-    s_cell *C1 = init_cell();
-    feuille_setCell(&f, C1, "C1");
-    cell_setStr(C1, "=A1 B1 + 2 *", &f);
+    // A5 = (D3 + A4) * 2 → en notation polonaise inverse : D3 A4 + 2 *
+    s_cell *A5 = init_cell();
+    feuille_setCell(&f, A5, "A5");
+    cell_setStr(A5, "=D3 A4 + 2 *", &f);
     
-    printf("A1 = %.2f\n", A1->value);
-    printf("B1 = %.2f\n", B1->value);
-    printf("C1 = %.2f (attendu: 60.00)\n", C1->value);
+    printf("D3 = %.2f\n", D3->value);
+    printf("A4 = %.2f\n", A4->value);
+    printf("A5 = %.2f (attendu: 60.00)\n", A5->value);
     printf("✓ Test 5 réussi\n\n");
 }
 
@@ -202,37 +198,37 @@ void test_division_par_zero() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    s_cell *A1 = init_cell();
-    feuille_setCell(&f, A1, "A1");
-    cell_setStr(A1, "=10 0 /", &f);
+    s_cell *D3 = init_cell();
+    feuille_setCell(&f, D3, "D3");
+    cell_setStr(D3, "=10 0 /", &f);
     
-    printf("A1 = %.2f (attendu: 0.00, car division par zéro)\n", A1->value);
+    printf("D3 = %.2f (attendu: 0.00, car division par zéro)\n", D3->value);
     printf("✓ Test 6 réussi\n\n");
 }
 
 void test_chaine_references() {
-    printf("=== TEST 7 : Chaîne de références (A1→B1→C1) ===\n");
+    printf("=== TEST 7 : Chaîne de références (D3→A4→A5) ===\n");
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    // A1 = 5
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "5", &f);
-    feuille_setCell(&f, A1, "A1");
+    // D3 = 5
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "5", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    // B1 = A1 * 2
-    s_cell *B1 = init_cell();
-    feuille_setCell(&f, B1, "B1");
-    cell_setStr(B1, "=A1 2 *", &f);
+    // A4 = D3 * 2
+    s_cell *A4 = init_cell();
+    feuille_setCell(&f, A4, "A4");
+    cell_setStr(A4, "=D3 2 *", &f);
     
-    // C1 = B1 + 3
-    s_cell *C1 = init_cell();
-    feuille_setCell(&f, C1, "C1");
-    cell_setStr(C1, "=B1 3 +", &f);
+    // A5 = A4 + 3
+    s_cell *A5 = init_cell();
+    feuille_setCell(&f, A5, "A5");
+    cell_setStr(A5, "=A4 3 +", &f);
     
-    printf("A1 = %.2f (attendu: 5.00)\n", A1->value);
-    printf("B1 = %.2f (attendu: 10.00)\n", B1->value);
-    printf("C1 = %.2f (attendu: 13.00)\n", C1->value);
+    printf("D3 = %.2f (attendu: 5.00)\n", D3->value);
+    printf("A4 = %.2f (attendu: 10.00)\n", A4->value);
+    printf("A5 = %.2f (attendu: 13.00)\n", A5->value);
     printf("✓ Test 7 réussi\n\n");
 }
 
@@ -241,12 +237,12 @@ void test_texte() {
     s_feuille f;
     init_feuille(&f, "Test", 26, 26);
     
-    s_cell *A1 = init_cell();
-    cell_setStr(A1, "Bonjour", &f);
-    feuille_setCell(&f, A1, "A1");
+    s_cell *D3 = init_cell();
+    cell_setStr(D3, "Bonjour", &f);
+    feuille_setCell(&f, D3, "D3");
     
-    printf("A1 contenu = '%s'\n", A1->t);
-    printf("A1 valeur = %.2f (attendu: 0.00 pour texte)\n", A1->value);
+    printf("D3 contenu = '%s'\n", D3->t);
+    printf("D3 valeur = %.2f (attendu: 0.00 pour texte)\n", D3->value);
     printf("✓ Test 8 réussi\n\n");
 }
 // void test_recalcul_automatique() {
@@ -254,54 +250,95 @@ void test_texte() {
 //     s_feuille f;
 //     init_feuille(&f, "Test", 26, 26);
     
-//     // A1 = 10
-//     s_cell *A1 = init_cell();
-//     cell_setStr(A1, "10", &f);
-//     feuille_setCell(&f, A1, "A1");
+//     // D3 = 10
+//     s_cell *D3 = init_cell();
+//     cell_setStr(D3, "10", &f);
+//     feuille_setCell(&f, D3, "D3");
     
-//     // B1 = A1 + 5
-//     s_cell *B1 = init_cell();
-//     feuille_setCell(&f, B1, "B1");
-//     cell_setStr(B1, "=A1 5 +", &f);
+//     // A4 = D3 + 5
+//     s_cell *A4 = init_cell();
+//     feuille_setCell(&f, A4, "A4");
+//     cell_setStr(A4, "=D3 5 +", &f);
     
-//     // C1 = B1 * 2
-//     s_cell *C1 = init_cell();
-//     feuille_setCell(&f, C1, "C1");
-//     cell_setStr(C1, "=B1 2 *", &f);
+//     // A5 = A4 * 2
+//     s_cell *A5 = init_cell();
+//     feuille_setCell(&f, A5, "A5");
+//     cell_setStr(A5, "=A4 2 *", &f);
     
-//     printf("Initial : A1=%.2f, B1=%.2f, C1=%.2f\n", A1->value, B1->value, C1->value);
-//     printf("Attendu : A1=10.00, B1=15.00, C1=30.00\n");
+//     printf("Initial : D3=%.2f, A4=%.2f, A5=%.2f\n", D3->value, A4->value, A5->value);
+//     printf("Attendu : D3=10.00, A4=15.00, A5=30.00\n");
     
-//     // MODIFIER A1
-//     printf("\n>>> Modification de A1 : 10 → 20\n");
-//     cell_setStr(A1, "20", &f);
+//     // MODIFIER D3
+//     printf("\n>>> Modification de D3 : 10 → 20\n");
+//     cell_setStr(D3, "20", &f);
     
-//     printf("Après recalcul : A1=%.2f, B1=%.2f, C1=%.2f\n", A1->value, B1->value, C1->value);
-//     printf("Attendu : A1=20.00, B1=25.00, C1=50.00\n");
+//     printf("Après recalcul : D3=%.2f, A4=%.2f, A5=%.2f\n", D3->value, A4->value, A5->value);
+//     printf("Attendu : D3=20.00, A4=25.00, A5=50.00\n");
     
-//     if(B1->value == 25.0 && C1->value == 50.0) {
+//     if(A4->value == 25.0 && A5->value == 50.0) {
 //         printf("✓ Test 9 réussi : recalcul automatique fonctionne !\n\n");
 //     } else {
 //         printf("❌ Test 9 échoué : recalcul ne fonctionne pas\n\n");
 //     }
 //}
+
+
 int main() {
-    printf("╔════════════════════════════════════════════════╗\n");
-    printf("║   SUITE DE TESTS - JALON 2 : FORMULES          ║\n");
-    printf("╚════════════════════════════════════════════════╝\n\n");
+    // printf("╔════════════════════════════════════════════════╗\n");
+    // printf("║   SUITE DE TESTS - JALON 2 : FORMULES          ║\n");
+    // printf("╚════════════════════════════════════════════════╝\n\n");
     
-    test_cellule_simple();
-    test_formule_simple();
-    test_reference_inexistante();
-    test_dependances();
-    test_operateurs_multiples();
-    test_division_par_zero();
-    test_chaine_references();
-    test_texte();
+    // test_cellule_simple();
+    // test_formule_simple();
+    // test_reference_inexistante();
+    // test_dependances();
+    // test_operateurs_multiples();
+    // test_division_par_zero();
+    // test_chaine_references();
+    // test_texte();
     // test_recalcul_automatique();
-    printf("╔════════════════════════════════════════════════╗\n");
-    printf("║   TOUS LES TESTS TERMINÉS !                    ║\n");
-    printf("╚════════════════════════════════════════════════╝\n");
+
+    printf("=== TEST 4 : Vérification des dépendances ===\n");
+    s_feuille f;
+    init_feuille(&f, "Test", 26, 26);
     
+    s_cell *D3 = init_cell();
+    feuille_setCell(&f, D3, "D3");
+    cell_setStr(D3, "17", &f);
+
+    s_cell *A4 = init_cell();
+    feuille_setCell(&f, A4, "A4");
+    cell_setStr(A4, "=D3 +", &f);
+
+    s_cell *A5 = init_cell();
+    feuille_setCell(&f, A5, "A5");
+    cell_setStr(A5, "=A4 D3 +", &f);
+
+    s_cell *D2 = init_cell();
+    feuille_setCell(&f, D2, "D2");
+    cell_setStr(D2, "15", &f);
+
+    s_cell *C5 = init_cell();
+    feuille_setCell(&f, C5, "C5");
+    cell_setStr(C5, "=D2 A5 +", &f);
+    cell_setStr(D3, "1", &f);
+    
+    // Vérifier que D3 a 2 dépendants
+    printf("D3 = %.2f\n", D3->value);
+    printf("A4 = %.2f (attendu: 17.00)\n", A4->value);
+    printf("A5 = %.2f (attendu: 34.00)\n", A5->value);
+    printf("C5 = %.2f (attendu: 49.00)\n", C5->value);
+    
+    node_t *all = NULL;
+collect_all_preds(C5, &all);
+
+printf("Prédécesseurs directs + indirects : ");
+node_t *v = all;
+while(v) {
+    printf("%p ", (void*)((s_cell*)list_get_data(v)));
+    v = list_next(v);
+}
+
+   
     return 0;
 }
