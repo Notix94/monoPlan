@@ -6,12 +6,13 @@
 #include "stack.h"
 #include <string.h>
 #include <ctype.h>
-#include "token.h"
-#include "cellule.h"
+
 
 #define MAX_FEUILLE_LENGTH 256 //nb case
 #define NBLIG 26
 #define NBCOL 50
+
+typedef struct cell s_cell;
 
 typedef struct feuille{
     char nom [MAX_FEUILLE_LENGTH];

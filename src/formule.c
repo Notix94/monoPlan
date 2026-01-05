@@ -1,5 +1,10 @@
 
 #include "../include/formule.h"
+#include "../include/cellule.h"
+#include "../include/token.h"
+#include "../include/liste.h"
+#include "../include/feuille.h"
+#include "../include/stack.h"
 #define MAX_CELL_LENGTH 256
 
 
@@ -64,8 +69,10 @@ int parse_formule(s_cell *cell, s_feuille *f){
 //cree token, stock dans tok[] de cell
 //
 int tokenCreate(s_cell *cell, s_feuille *f){
+    char expr_copy[MAX_CELL_LENGTH];
+    strcpy(expr_copy, cell->t);
      //tab des tokens
-    char *expr=cell->t;
+    char *expr=expr_copy;
     if(expr[0] == '=') expr++; // ignore le '='
     char *tok=strtok(expr," \t");//separe en token chaque mot [B22,1,5,+]
 
@@ -81,13 +88,14 @@ int tokenCreate(s_cell *cell, s_feuille *f){
 
         // Calculer la colonne (lettres)
         while (isalpha(tok[i])) {
-            char letter = tok[i];         
+            char letter = toupper(tok[i]);         
             int value = letter - 'A' + 1; // A=1, B=2, ..., Z=26
             col = col * 26 + value;        // conversion en base 26
             i++;                           // passer au caractère suivant
         }
 
         row=atoi(tok+i);// atoi prend la partie restante de la chaîne
+        printf("[DEBUG] Token '%s' -> col=%d, row=%d\n", tok, col, row);
         // VÉRIFICATION DES LIMITES
         if(row < 1 || row > f->lignes || col < 1 || col > f->colonnes) {
             printf("[ERREUR] Référence %s hors limites (row=%d, col=%d)\n", tok, row, col);
@@ -104,9 +112,9 @@ int tokenCreate(s_cell *cell, s_feuille *f){
 
         // Si la cellule n'existe pas, l'initialiser
         if(ref_cell == NULL) {
-        ref_cell = init_cell();
-        f->tab[row-1][col-1] = ref_cell;//on place la cell dans la f
-        printf("[INFO] Cellule %s (row=%d, col=%d) n'existait pas → initialisée à 0\n", tok, row, col);
+            ref_cell = init_cell();
+            f->tab[row-1][col-1] = ref_cell;//on place la cell dans la f
+            printf("[INFO] Cellule %s (row=%d, col=%d) n'existait pas → initialisée à 0\n", tok, row, col);
         }
 
         t->value.ref = ref_cell;

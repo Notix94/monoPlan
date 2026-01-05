@@ -9,6 +9,8 @@
 #include "token.h"
 #include "stack.h"
 #include "cellule.h"
+#include "liste.h"
+
 typedef struct cell s_cell;
 typedef struct feuille s_feuille;
 // Analyse la chaîne de la cellule et construit les tokens
